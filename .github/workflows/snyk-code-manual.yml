@@ -1,6 +1,5 @@
 name: "snyk code manual test"
-on: [push, pull_request]
-
+on: [workflow_dispatch]
 jobs:
   build:
     name: sarif testing action
@@ -9,6 +8,11 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v3
+      - name: Snyk Test
+        run: snyk code test --org=${{ secrets.SNYK_ORG }} --sarif > sarif.json
+        continue-on-error: true
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
         with:
