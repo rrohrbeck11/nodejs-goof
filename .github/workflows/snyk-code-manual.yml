@@ -8,13 +8,18 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v3
+      - name: Snyk monitor
+        run: snyk monitor --org=${{ secrets.SNYK_ORG }} 
+        continue-on-error: true
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Snyk Test
-        run: snyk code test --org=${{ secrets.SNYK_ORG }} --sarif > sarif.json
+        run: snyk code test --org=${{ secrets.SNYK_ORG }} --sarif > snyk-sarif2.json
         continue-on-error: true
         env:
            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: sarif.json
+          sarif_file:  snyk-sarif2.json
           # sarif_file: example111.json

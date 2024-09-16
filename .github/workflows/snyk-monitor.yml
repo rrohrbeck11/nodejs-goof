@@ -1,0 +1,13 @@
+name: "snyk monitor"
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: snyk/actions/setup@master
+      - name: Snyk monitor
+        run: snyk monitor --org=${{ secrets.SNYK_ORG }} 
+        continue-on-error: true
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
