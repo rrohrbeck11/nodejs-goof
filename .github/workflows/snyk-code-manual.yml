@@ -22,10 +22,14 @@ jobs:
       - name: Snyk Container # Rename your image, for testing and failing please add snyk container test before snyk container monitor
         run: |
           docker build . -t goof_test:latest
-          snyk container monitor goof_test:latest --file=Dockerfile
+          snyk container monitor --org=${{ secrets.SNYK_ORG }} goof_test:latest --file=Dockerfile
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Snyk IaC # Remove || true to fail if there are vulnerabilities
         run: |
-          snyk iac test || true
+          snyk iac test --org=${{ secrets.SNYK_ORG }} || true
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
         with:
